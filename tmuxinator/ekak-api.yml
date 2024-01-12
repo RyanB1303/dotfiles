@@ -1,0 +1,11 @@
+# /Users/ry/.config/tmuxinator/ekak-api.yml
+
+name: ekak-api
+root: ~/Projects/rails/ekak-api
+ 
+windows:
+  - backend: rails s -p 8080
+  - frontend:
+      root: ~/Projects/javascript/fekak
+      panes: nvm use v18.12.1 && npm run dev
+

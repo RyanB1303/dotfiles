@@ -1,0 +1,31 @@
+{
+  "languageserver": {
+    "elmLS": {
+      "command": "elm-language-server",
+      "filetypes": ["elm"],
+      "rootPatterns": ["elm.json"]
+    }
+  },
+  "codeLens.enable": true,
+  "diagnostic-languageserver.filetypes": {
+    "lua": "lua",
+    "ruby": "solargraph",
+    "js": "javascript"
+  },
+  "diagnostic-languageserver.formatFiletypes": {
+    "lua": "lua-format",
+    "php": "intelephense",
+    "ruby": "solargraph",
+    "js": "javascript"
+  },
+  "coc.preferences.formatOnSaveFiletypes": [
+    "ruby",
+    "js"
+  ],
+  "diagnostic.enable": true,
+  "solargraph.diagnostics": true,
+  "solargraph.formatting": true,
+  "intelephense.licenceKey": "00RHJ8DSNYWJNR8",
+  "Lua.telemetry.enable": true
+}
+
