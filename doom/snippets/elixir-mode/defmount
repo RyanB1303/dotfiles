@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: liveview mount
+# key: defmount
+# --
+def mount(_params, _session, socket) do
+# initial state
+{:ok, assign(socket, $1)}
+end
