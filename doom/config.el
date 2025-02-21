@@ -6,6 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
+;; (setq user-full-name "John Doe"
+;;       user-mail-address "john@doe.com")
 (setq user-full-name "RyanB1303"
       user-mail-address "ryan.brilliant.nirwana@gmail.com")
 
@@ -32,8 +34,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;; fav theme: doom-moonlight leuven
-(setq doom-theme 'leuven
+(setq doom-theme 'doom-palenight
       doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 15)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16)
       nerd-icons-font-names '("SymbolsNerdFontMono-Regular.ttf"))
@@ -42,30 +43,23 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
 
-;; Prevents some cases of Emacs flickering.
-(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-;; fullscreen at start - repot
-;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-
-;;; :ui doom-dashboard
 (setq fancy-splash-image (file-name-concat doom-user-dir "splash.png"))
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(setq org-directory "~/Projects/org/")
 
 ;; projectile dir
 (setq projectile-project-search-path '(("~/Projects/" . 3) ("~/Exercism/" . 3)))
 
-;;; :ui modeline
-;; An evil mode indicator is redundant with cursor shape
-(setq doom-modeline-modal nil)
-
+;; projectile find elm dir
+(after! projectile
+  (projectile-register-project-type 'elm '("elm.json")
+                                    :project-file "elm.json"))
 ;;; :editor evil
+(setq doom-modeline-modal nil)
 ;; Focus new window after splitting
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Projects/org/"
-      deft-directory "~/Projects/org/")
 
 ;; org todo set done time
 (after! org
@@ -73,6 +67,7 @@
 
 ;; which-key scroll
 (setq which-key-use-C-h-commands 't)
+
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
@@ -104,15 +99,6 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-
-;;; :completion company
-;; IMO, modern editors have trained a bad habit into us all: a burning need for
-;; completion all the time -- as we type, as we breathe, as we pray to the
-;; ancient ones -- but how often do you *really* need that information? I say
-;; rarely. So opt for manual completion:
-(after! company
-  (setq company-idle-delay nil))
-
 ;; fix default identation
 (after! web-mode
   (setq web-mode-code-indent-offset 2)
@@ -139,32 +125,12 @@
   (setq typescript-indent-level 2)
   (setq indent-tabs-mode nil))
 
-;; prodigy
-(map! :leader
-      :desc "Open prodigy"
-      "o p" #'prodigy)
-
-(prodigy-define-tag
-  :name 'phoenix
-  :ready-message "[info] Access SurveyWeb.Endpoint at http://localhost:4000")
-
-(prodigy-define-service
-  :name "Suvery-Server"
-  :command "mix"
-  :args '("phx.server")
-  :cwd "~/Projects/bappeda_dev_team/survey"
-  :env '(("DATABASE_URL" "ecto://postgres:postgres@localhost:54322/survey_dev")
-         ("DATABASE_TEST_URL" "ecto://postgres:postgres@localhost:54322/survey_test")
-         ("PORT" "4000"))
-  :port 4000
-  :tags '(phoenix)
-  :stop-signal 'sigterm
-  )
-
+(after! scala-mode
+  (setq indent-tabs-mode nil)
+  (setq tab-width 4))
 ;; mise
 ;; enable globally
-(add-hook 'after-init-hook #'global-mise-mode)
-
+(setq global-mise-mode 't)
 ;; Indent Whole File
 (defun indent-whole-buffer ()
   "INDENT WHOLE BUFFER."
@@ -173,6 +139,23 @@
   (indent-region (point-min) (point-max) nil)
   (untabify (point-min) (point-max)))
 (map! :desc "Indent File" :leader "-" #'indent-whole-buffer)
+
+;; remove non-ascii character
+(defun clean-non-ascii-characters (&optional start end)
+  "Remove non-ASCII characters from the buffer or the selected region.
+If a region is active, operate only on that region.
+Otherwise, operate on the entire buffer."
+  (interactive
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
+  (save-excursion
+    (goto-char start)
+    (while (re-search-forward "[^\x00-\x7F]" end t)
+      (replace-match ""))))
+
+;; Bind the function to SPC-\
+(map! :desc "Clean non-ASCII characters" :leader "\\" #'clean-non-ascii-characters)
 
 ;; open epub file
 (use-package! nov
@@ -190,11 +173,8 @@
 (after! lsp-haskell
   (setq lsp-haskell-formatting-provider "ormolu"))
 
-;; projectile find elm dir
-(after! projectile
-  (projectile-register-project-type 'elm '("elm.json")
-                                    :project-file "elm.json"))
-
+(add-hook! 'haskell-mode-hook
+  (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 ;;; :tools lsp
 ;; Disable invasive lsp-mode features
 (after! lsp-mode
@@ -207,10 +187,16 @@
 (after! lsp-ui
   (setq lsp-ui-sideline-enable nil  ; no more useful than flycheck
         lsp-ui-doc-enable nil))     ; redundant with K
+;; corfu
+(after! corfu
+  (setq corfu-auto nil))
 
+(after! lsp-ui
+  (setq lsp-ui-sideline-enable nil  ; no more useful than flycheck
+        lsp-ui-doc-enable nil))     ; redundant with K
 ;; elixir
 ;; elixir setup lsp
-(add-hook 'elixir-mode-hook #'lsp!)
+(add-hook! 'elixir-mode-hook #'lsp!)
 (add-to-list 'exec-path "~/.local/share/elixir-ls")
 (after! lsp-mode
   (setq lsp-elixir-dialyzer-enabled nil))
@@ -218,65 +204,23 @@
 (define-derived-mode heex-mode web-mode "HEEx" "Major mode for editing HEEx files")
 (add-to-list 'auto-mode-alist '("\\.heex?\\'" . heex-mode))
 
-(add-hook 'heex-mode-hook #'tree-sitter-hl-mode)
-(add-hook 'heex-mode-hook
-          (lambda()
-            (add-hook 'before-save-hook 'elixir-format nil t)))
-;; elixir repl
-(map! :after elixir-mode
-      :localleader
-      :map elixir-mode-map
-      :prefix ("i" . "inf-elixir")
-      "i" 'inf-elixir
-      "p" 'inf-elixir-project
-      "l" 'inf-elixir-send-line
-      "r" 'inf-elixir-send-region
-      "b" 'inf-elixir-send-buffer
-      "R" 'inf-elixir-reload-module)
+(add-hook! 'heex-mode-hook #'tree-sitter-hl-mode)
+(add-hook! 'heex-mode-hook
+  (lambda()
+    (add-hook 'before-save-hook 'elixir-format nil t)))
 ;; ruby
 (setq-hook! 'ruby-mode-hook
   +format-inhibit t
   +format-with-lsp t)
 (add-hook! 'ruby-mode-hook
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
+;; php
+(after! php-mode
+  (setq intelephense-key (getenv "INTELEPHENSE_KEY"))
+  (setq lsp-intelephense-licence-key intelephense-key))
 
-;; webmode
-(setq-hook! 'web-mode-hook
-  apheleia-inhibit t
-  +format-with nil)
-(add-hook! 'web-mode-hook
-  (lambda()
-    (add-hook 'before-save-hook #'+format/buffer nil t)))
-;; A set of Doom Emacs mappings for manipulating parentheses and sexps
-;; Wrap sexp in round parentheses
-;; `SPC` - `c` -`p` - `(`
-;; Wrap sexp in square parentheses
-;; `SPC` - `c` -`p` - `[`
-;; Wrap sexp in curly parentheses
-;; `SPC` - `c` -`p` - `{`
-;; Copy sexp
-;; `SPC` - `c` -`p` - `y`
-;; Kill sexp
-;; `SPC` - `c` -`p` - `d`
-;; Raise sexp
-;; `SPC` - `c` -`p` - `r`
-;; Push parenthesis to the right
-;; `SPC` - `c` -`p` - `>` - `)`
-;; Push parenthesis to the left
-;; `SPC` - `c` -`p` - `<` - `(`
-;; Pull parenthesis from the right
-;; `SPC` - `c` -`p` - `<` - `)`
-;; Pull parenthesis from the left
-;; `SPC` - `c` -`p` - `>` - `(`
-(use-package! doom-parents)
-;; evil cleverparens
-(add-hook 'lisp-mode-hook #'evil-cleverparens-mode)
-
-;;(use-package! ess-plot :defer t)
-;; gptel
-(setq gptel-model "gpt-4o-mini")
+;; ess plot -> view ess (R) plot inside emacs
+(use-package! ess-plot :defer t)
+;; menu-bar on top
+;; (setq menu-bar-mode 0)
 (menu-bar-mode 0)
-(use-package! openapi-preview :commands 'openapi-preview)
-
-;; mermaid ob
-(setq ob-mermaid-cli-path "/Users/ry/.local/share/mise/installs/node/20/bin/mmdc")

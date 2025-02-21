@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: mydefmodule
+# key: dmodule
+# --
+defmodule ${1:`(module-model)`}.${2:`(module-file-name)`} do
+  $0
+end

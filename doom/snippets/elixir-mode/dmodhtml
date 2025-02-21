@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: defmodule HTML
+# key: dmodhtml
+# --
+defmodule ${1:`(module-dir)`}.${2:`(module-html-helper)`} do
+  use $1, :html
+
+  embed_templates "`(file-name-base)`/*"
+
+  $0
+end

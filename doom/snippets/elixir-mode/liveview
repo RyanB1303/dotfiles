@@ -14,7 +14,7 @@ defmodule ${1:`(mapconcat 'capitalize (split-string (file-name-nondirectory (dir
   end
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <h1>Hello, World!</h1>
     """
   end

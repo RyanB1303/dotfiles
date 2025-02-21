@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: socket update
+# key: socku
+# --
+socket = update(socket, ${1:symbol}, ${2:fn})

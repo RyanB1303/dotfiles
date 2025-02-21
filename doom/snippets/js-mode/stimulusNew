@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: stimulusNew
+# key: stimu
+# --
+import { Controller } from "stimulus"
+
+export default class extends Controller {
+       // target elements
+       static targets = []
+       // values
+       static values = {}
+
+       // when target connected
+       connect() {}
+
+       // cleanup
+       disconnect() {}
+}

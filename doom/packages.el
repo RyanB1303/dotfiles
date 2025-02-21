@@ -3,7 +3,6 @@
 
 ;; To install a package with Doom you must declare them here and run 'doom sync'
 ;; on the command line, then restart Emacs for the changes to take effect -- or
-;; use 'M-x doom/reload'.
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
@@ -49,17 +48,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 (package! clojure-essential-ref-nov)
-(package! doom-parents
-  :recipe (:host github :repo "tomekw/doom-parents"))
 (package! mise)
-(package! inf-elixir)
-(package! direnv)
-(package! carbon-now-sh)
-(package! evil-cleverparens)
-(package! quicktype :recipe (:host github :repo "artawower/quicktype.el"))
-(package! gptel)
-(package! openapi-preview :recipe (:host github :repo "merrickluo/openapi-preview"))
 (package! ess-view-data)
 (package! ess-plot
   :recipe (:host github :repo "DennieTeMolder/ess-plot"))
-(package! ob-mermaid)

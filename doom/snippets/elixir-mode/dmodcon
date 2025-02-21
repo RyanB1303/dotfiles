@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: defmodule controller
+# key: dmodcon
+# --
+defmodule ${1:`(module-dir)`}.${2:`(module-file-name)`} do
+  use $1, :controller
+
+
+end

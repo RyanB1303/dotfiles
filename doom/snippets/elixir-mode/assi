@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: LiveView assign
+# key: assi
+# --
+socket = assign(socket, $1, $2)

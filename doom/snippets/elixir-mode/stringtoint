@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: StringToInteger
+# key: sti
+# --
+String.to_integer($0)
